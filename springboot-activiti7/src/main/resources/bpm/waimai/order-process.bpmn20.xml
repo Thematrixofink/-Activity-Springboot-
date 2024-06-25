@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" targetNamespace="http://www.activiti.org/test">
+    <process id="orderProcess" name="Order Process">
+        <startEvent id="startOrder" name="Start Order"/>
+        <userTask id="inputOrderDetails" name="Input Order Details" activiti:assignee="${username}">
+            <extensionElements>
+                <activiti:formProperty id="restaurantName" name="Restaurant Name" type="string" required="true"/>
+                <activiti:formProperty id="orderDetails" name="Order Details" type="string" required="true"/>
+                <activiti:formProperty id="quantity" name="Quantity" type="long" required="true"/>
+                <activiti:formProperty id="address" name="Address" type="string" required="true"/>
+            </extensionElements>
+        </userTask>
+        <userTask id="restaurantApproval" name="Restaurant Approval" activiti:assignee="${restaurantName}">
+            <extensionElements>
+                <activiti:formProperty id="approve" name="Approve" type="boolean" required="true"/>
+            </extensionElements>
+        </userTask>
+        <exclusiveGateway id="approvalDecision" name="Approval Decision"/>
+        <userTask id="assignRider" name="Assign Rider" activiti:assignee="${restaurantName}">
+            <extensionElements>
+                <activiti:formProperty id="rider" name="Rider" type="string" required="true"/>
+            </extensionElements>
+        </userTask>
+        <userTask id="riderDelivery" name="Rider Delivery" activiti:assignee="${rider}"/>
+        <endEvent id="endOrder" name="End Order"/>
+        <sequenceFlow id="flow1" sourceRef="startOrder" targetRef="inputOrderDetails"/>
+        <sequenceFlow id="flow2" sourceRef="inputOrderDetails" targetRef="restaurantApproval"/>
+        <sequenceFlow id="flow3" sourceRef="restaurantApproval" targetRef="approvalDecision"/>
+        <sequenceFlow id="flow4" sourceRef="approvalDecision" targetRef="assignRider">
+            <conditionExpression xsi:type="tFormalExpression">${approve}</conditionExpression>
+        </sequenceFlow>
+        <sequenceFlow id="flow5" sourceRef="assignRider" targetRef="riderDelivery" />
+        <sequenceFlow id="flow6" sourceRef="riderDelivery" targetRef="endOrder" />
+        <sequenceFlow id="flow7" sourceRef="approvalDecision" targetRef="endOrder">
+            <conditionExpression xsi:type="tFormalExpression">${!approve}</conditionExpression>
+        </sequenceFlow>
+    </process>
+    <bpmndi:BPMNDiagram id="BPMNDiagram_orderProcess">
+        <bpmndi:BPMNPlane id="BPMNPlane_orderProcess" bpmnElement="orderProcess">
+            <bpmndi:BPMNShape id="BPMNShape_startOrder" bpmnElement="startOrder">
+                <omgdc:Bounds x="100" y="100" width="36" height="36"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="BPMNShape_inputOrderDetails" bpmnElement="inputOrderDetails">
+                <omgdc:Bounds x="200" y="100" width="100" height="80"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="BPMNShape_restaurantApproval" bpmnElement="restaurantApproval">
+                <omgdc:Bounds x="350.0" y="100.00001" width="100" height="80"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="BPMNShape_approvalDecision" bpmnElement="approvalDecision">
+                <omgdc:Bounds x="500" y="130" width="50" height="50"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="BPMNShape_assignRider" bpmnElement="assignRider">
+                <omgdc:Bounds x="600" y="100" width="100" height="80"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="BPMNShape_riderDelivery" bpmnElement="riderDelivery">
+                <omgdc:Bounds x="750" y="100" width="100" height="80"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNShape id="BPMNShape_endOrder" bpmnElement="endOrder">
+                <omgdc:Bounds x="900" y="100" width="36" height="36"/>
+            </bpmndi:BPMNShape>
+            <bpmndi:BPMNEdge id="BPMNEdge_flow1" bpmnElement="flow1">
+                <omgdi:waypoint x="136" y="118"/>
+                <omgdi:waypoint x="200" y="140"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="BPMNEdge_flow2" bpmnElement="flow2">
+                <omgdi:waypoint x="300" y="140"/>
+                <omgdi:waypoint x="350.0" y="140.0"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="BPMNEdge_flow3" bpmnElement="flow3">
+                <omgdi:waypoint x="450.0" y="140.0"/>
+                <omgdi:waypoint x="500" y="155"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="BPMNEdge_flow4" bpmnElement="flow4">
+                <omgdi:waypoint x="550" y="155"/>
+                <omgdi:waypoint x="600" y="140"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="BPMNEdge_flow5" bpmnElement="flow5">
+                <omgdi:waypoint x="700" y="140"/>
+                <omgdi:waypoint x="750" y="140"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="BPMNEdge_flow6" bpmnElement="flow6">
+                <omgdi:waypoint x="850" y="140"/>
+                <omgdi:waypoint x="900" y="118"/>
+            </bpmndi:BPMNEdge>
+            <bpmndi:BPMNEdge id="BPMNEdge_flow7" bpmnElement="flow7">
+                <omgdi:waypoint x="550" y="155"/>
+                <omgdi:waypoint x="550" y="200"/>
+                <omgdi:waypoint x="900" y="200"/>
+                <omgdi:waypoint x="900" y="136"/>
+            </bpmndi:BPMNEdge>
+        </bpmndi:BPMNPlane>
+    </bpmndi:BPMNDiagram>
+</definitions>
