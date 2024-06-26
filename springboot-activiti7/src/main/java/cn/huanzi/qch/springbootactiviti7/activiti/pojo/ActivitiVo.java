@@ -12,6 +12,7 @@ public class ActivitiVo {
     private String pm;
     private String bm;
 
+
     //完成任务
     private String taskId;
     private boolean auditFlag;

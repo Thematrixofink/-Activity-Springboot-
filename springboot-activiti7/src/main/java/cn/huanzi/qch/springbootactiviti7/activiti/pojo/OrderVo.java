@@ -5,22 +5,42 @@ import lombok.Data;
 
 @Data
 public class OrderVo {
+    /**
+     * 餐馆名称
+     */
+    private String restaurantName;
 
-    String restaurantName;
-    String orderDetails;
-    String quantity;
-    String address;
-    String username;
+    /**
+     * 订单详情
+     */
+    private String orderDetails;
 
-//    //请假流程发起
-//    private String businessKey;
-//    private String username;
-//    private String dish;
-//    private String count;
-//    private String store;
+    /**
+     数量
+     */
+    private String quantity;
 
-    //完成任务
+    /**
+     * 数量
+     */
+    private String address;
+
+    /**
+     * 用户名
+     */
+    private String username;
+
+    /**
+     * 订单ID
+     */
     private String taskId;
+
+    /**
+     * 订单状态
+     */
+    private String status;
+
+
     private boolean auditFlag;
     private String message;
 }

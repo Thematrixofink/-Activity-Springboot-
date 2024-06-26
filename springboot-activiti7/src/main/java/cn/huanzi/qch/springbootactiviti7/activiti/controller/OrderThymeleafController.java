@@ -1,12 +1,10 @@
 package cn.huanzi.qch.springbootactiviti7.activiti.controller;
 
-
-import cn.huanzi.qch.springbootactiviti7.activiti.pojo.OrderVo;
 import cn.hutool.core.util.IdUtil;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.runtime.ProcessInstance;
-import org.apache.xpath.operations.Mod;
+import org.activiti.engine.task.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -45,6 +43,15 @@ public class OrderThymeleafController {
         return "waimai/rider-orders";
     }
 
+    /**
+     * 用户订餐
+     * @param restaurantName
+     * @param orderDetails
+     * @param quantity
+     * @param address
+     * @param username
+     * @return
+     */
     @PostMapping("/start")
     public ModelAndView startOrder(@RequestParam String restaurantName,
                                    @RequestParam String orderDetails,
@@ -59,6 +66,7 @@ public class OrderThymeleafController {
         variables.put("address", address);
         variables.put("username", username);
         variables.put("taskId", IdUtil.simpleUUID());
+        variables.put("status", "商家正在备餐中~~~");
         runtimeService.startProcessInstanceByKey("orderProcess", variables);
         ModelAndView modelAndView = new ModelAndView("waimai/orderIndex");
         modelAndView.addObject("message","下单成功");
@@ -116,6 +124,11 @@ public class OrderThymeleafController {
     }
 
 
+    /**
+     * 骑手查看自己的所有的订单
+     * @param rider
+     * @return
+     */
     @GetMapping("/rider-orders")
     public ModelAndView getRiderOrders(@RequestParam String rider) {
         List<ProcessInstance> processInstances = runtimeService.createProcessInstanceQuery()
@@ -135,6 +148,13 @@ public class OrderThymeleafController {
         return modelAndView;
     }
 
+    /**
+     * 为订单分配骑手
+     * @param taskId
+     * @param rider
+     * @param model
+     * @return
+     */
     @PostMapping("/assign-rider")
     public ModelAndView assignRider(@RequestParam String taskId, @RequestParam String rider, Model model) {
         List<ProcessInstance> processInstances = runtimeService.createProcessInstanceQuery()
@@ -144,8 +164,39 @@ public class OrderThymeleafController {
         //根据taskId来查询的话，只会有一个订单
         ProcessInstance processInstance = processInstances.get(0);
         runtimeService.setVariable(processInstance.getProcessInstanceId(),"rider",rider);
+        runtimeService.setVariable(processInstance.getProcessInstanceId(),"status","骑手正在配送中~~~");
         ModelAndView modelAndView = new ModelAndView("waimai/restaurant-orders");
         modelAndView.addObject("message","为订单:"+taskId+"分配骑手: " + rider);
+        return modelAndView;
+    }
+
+    /**
+     * 确认订单
+     * @param taskId
+     * @return
+     */
+    @PostMapping("/ensure")
+    public ModelAndView ensureOrder(@RequestParam String taskId){
+
+        //根据订单的id(taskId)查找到activiti的任务Id
+        Task task = taskService.createTaskQuery()
+                .processVariableValueEquals("taskId", taskId)
+                .singleResult();
+
+        if (task == null) {
+            // 处理任务不存在的情况
+            ModelAndView modelAndView = new ModelAndView("waimai/user-orders");
+            modelAndView.addObject("message", "任务不存在!");
+            return modelAndView;
+        }
+        //完成任务
+        taskService.complete(task.getId());
+
+        // 更新流程变量
+        String processInstanceId = task.getProcessInstanceId();
+        runtimeService.setVariable(processInstanceId, "status", "已完成~~~");
+        ModelAndView modelAndView = new ModelAndView("waimai/user-orders");
+        modelAndView.addObject("message", "确认订单成功!");
         return modelAndView;
     }
 

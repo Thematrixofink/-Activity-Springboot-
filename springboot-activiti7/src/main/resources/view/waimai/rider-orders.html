@@ -13,7 +13,13 @@
 <div>
   <ul>
     <li th:each="order : ${orders}">
-      <span th:text="${order}"></span>
+      <span th:text="'TaskId: ' + ${order['taskId']}"></span><br>
+      <span th:text="'Restaurant Name: ' + ${order['restaurantName']}"></span><br>
+      <span th:text="'Order Details: ' + ${order['orderDetails']}"></span><br>
+      <span th:text="'Quantity: ' + ${order['quantity']}"></span><br>
+      <span th:text="'Address: ' + ${order['address']}"></span><br>
+      <span th:text="'Username: ' + ${order['username']}"></span><br>
+      <hr>
     </li>
   </ul>
 </div>
