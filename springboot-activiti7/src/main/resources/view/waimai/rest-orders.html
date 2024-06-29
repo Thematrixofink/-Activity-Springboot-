@@ -1,39 +1,69 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>View Restaurant Orders</title>
+  <title>餐馆订单管理</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
 </head>
 <body>
-<h1>View Restaurant Orders</h1>
+<h1>查询餐馆订单</h1>
 <form action="/thymeleaf/restaurant-orders" method="get">
-  <label for="restaurantName">Restaurant Name:</label>
+  <label for="restaurantName">餐馆名称:</label>
   <input type="text" id="restaurantName" name="restaurantName" required><br>
-  <button type="submit">View Orders</button>
+  <button type="submit">查询订单</button>
 </form>
 <div>
   <ul>
     <li th:each="order : ${orders}">
-      <span th:text="'TaskId: ' + ${order['taskId']}"></span><br>
-      <span th:text="'Restaurant Name: ' + ${order['restaurantName']}"></span><br>
-      <span th:text="'Order Details: ' + ${order['orderDetails']}"></span><br>
-      <span th:text="'Quantity: ' + ${order['quantity']}"></span><br>
-      <span th:text="'Address: ' + ${order['address']}"></span><br>
-      <span th:text="'Username: ' + ${order['username']}"></span><br>
+      <span th:text="'订单 ID : ' + ${order['orderId']}"></span><br>
+      <span th:text="'餐馆名称: ' + ${order['restaurantName']}"></span><br>
+      <span th:text="'餐品名称: ' + ${order['orderDetails']}"></span><br>
+      <span th:text="'餐品数量: ' + ${order['quantity']}"></span><br>
+      <span th:text="'用户地址: ' + ${order['address']}"></span><br>
+      <span th:text="'用户姓名: ' + ${order['username']}"></span><br>
+      <span th:text="'订单状态: ' + ${order['status']}"></span><br>
+      <button th:data-id="${order['orderId']}" onclick="ratify(this)">同意</button>
+      <button th:data-id="${order['orderId']}" onclick="reject(this)">拒绝</button>
       <hr> <!-- 可选的分隔线 -->
     </li>
   </ul>
 </div>
 
-<h2>Assign Rider</h2>
+<h2>分配骑手</h2>
 <form action="/thymeleaf/assign-rider" method="post">
-  <label for="taskId">Task ID:</label>
-  <input type="text" id="taskId" name="taskId" required><br>
-  <label for="rider">Rider Name:</label>
+  <label for="orderId">订单  ID:</label>
+  <input type="text" id="orderId" name="orderId" required><br>
+  <label for="rider">骑手名称:</label>
   <input type="text" id="rider" name="rider" required><br>
-  <button type="submit">Assign Rider</button>
+  <button type="submit">分配骑手</button>
 </form>
+
 <div>
   <p th:if="${message}" th:text="${message}"></p>
 </div>
+
+
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  // 同意操作
+  function ratify(button) {
+    var orderId = $(button).data('id');
+    $.post('/thymeleaf/approve', {orderId: orderId}, function(data) {
+      alert('操作成功！');
+      window.location.reload();
+    });
+  }
+
+  // 拒绝操作
+  function reject(button) {
+    var orderId = $(button).data('id');
+    $.post('/thymeleaf/reject', {orderId: orderId}, function(data) {
+      alert('操作成功！');
+      window.location.reload();
+    });
+  }
+  /*]]>*/
+</script>
 </body>
 </html>

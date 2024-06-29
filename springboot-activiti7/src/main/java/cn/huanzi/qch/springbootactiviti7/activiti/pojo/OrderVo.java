@@ -33,14 +33,23 @@ public class OrderVo {
     /**
      * 订单ID
      */
-    private String taskId;
+    private String orderId;
 
     /**
      * 订单状态
      */
     private String status;
 
+    /**
+     * 消息
+     */
+    private String message;
+
+    /**
+     * 订单是否被批准
+     */
+    private boolean approve;
+
 
     private boolean auditFlag;
-    private String message;
 }

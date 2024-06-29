@@ -1,28 +1,42 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>View Your Orders</title>
+  <title>用户订单</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-<h1>View Your Orders</h1>
+<h1>用户订单</h1>
 <form action="/thymeleaf/user-orders" method="get">
-  <label for="username">Your Name:</label>
+  <label for="username">您的姓名:</label>
   <input type="text" id="username" name="username" required><br>
-  <button type="submit">View Orders</button>
+  <button type="submit">查询订单</button>
 </form>
 <div>
   <ul>
     <li th:each="order : ${orders}">
-      <span th:text="'TaskId: ' + ${order['taskId']}"></span><br>
-      <span th:text="'Restaurant Name: ' + ${order['restaurantName']}"></span><br>
-      <span th:text="'Order Details: ' + ${order['orderDetails']}"></span><br>
-      <span th:text="'Quantity: ' + ${order['quantity']}"></span><br>
-      <span th:text="'Address: ' + ${order['address']}"></span><br>
-      <span th:text="'Username: ' + ${order['username']}"></span><br>
+      <span th:text="'订单  ID: ' + ${order['orderId']}"></span><br>
+      <span th:text="'餐馆名称: ' + ${order['restaurantName']}"></span><br>
+      <span th:text="'餐品名称: ' + ${order['orderDetails']}"></span><br>
+      <span th:text="'餐品数量: ' + ${order['quantity']}"></span><br>
+      <span th:text="'送货地址: ' + ${order['address']}"></span><br>
+      <span th:text="'用户姓名: ' + ${order['username']}"></span><br>
+      <span th:text="'订单状态: ' + ${order['status']}"></span><br>
+      <button th:data-id="${order['orderId']}" onclick="ratify(this)">确认收货</button>
       <hr> <!-- 可选的分隔线 -->
     </li>
   </ul>
 
 </div>
+
+<script th:inline="javascript">
+  // 同意操作
+  function ratify(button) {
+    var orderId = $(button).data('id');
+    $.post('/thymeleaf/ensure', {orderId: orderId}, function(data) {
+      alert('操作成功！');
+      window.location.reload();
+    });
+  }
+</script>
 </body>
 </html>

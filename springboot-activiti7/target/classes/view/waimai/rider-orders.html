@@ -1,19 +1,26 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>View Rider Orders</title>
+  <title>骑手订单管理</title>
 </head>
 <body>
-<h1>View Rider Orders</h1>
+<h1>骑手订单管理</h1>
 <form action="/thymeleaf/rider-orders" method="get">
-  <label for="rider">Rider Name:</label>
+  <label for="rider">骑手名称:</label>
   <input type="text" id="rider" name="rider" required><br>
-  <button type="submit">View Orders</button>
+  <button type="submit">查询订单</button>
 </form>
 <div>
   <ul>
     <li th:each="order : ${orders}">
-      <span th:text="${order}"></span>
+      <span th:text="'订单  ID: ' + ${order['orderId']}"></span><br>
+      <span th:text="'餐馆名称: ' + ${order['restaurantName']}"></span><br>
+      <span th:text="'餐品名称: ' + ${order['orderDetails']}"></span><br>
+      <span th:text="'餐品数目: ' + ${order['quantity']}"></span><br>
+      <span th:text="'送货地址: ' + ${order['address']}"></span><br>
+      <span th:text="'客户姓名: ' + ${order['username']}"></span><br>
+      <span th:text="'订单状态: ' + ${order['status']}"></span><br>
+      <hr>
     </li>
   </ul>
 </div>

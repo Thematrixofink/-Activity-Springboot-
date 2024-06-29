@@ -5,6 +5,8 @@ import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.DeploymentQuery;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.repository.ProcessDefinitionQuery;
+import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,5 +67,25 @@ public class  SpringbootActiviti7ApplicationTests {
                 .key("ORDER_ACT")
                 .deploy();
         System.out.println("流程部署成功！");
+    }
+
+    @Test
+    public void clearAll(){
+        ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+
+        // 删除所有部署
+        for (Deployment deployment : processEngine.getRepositoryService().createDeploymentQuery().list()) {
+            processEngine.getRepositoryService().deleteDeployment(deployment.getId(), true);
+        }
+
+        // 删除所有流程实例
+        for (ProcessInstance processInstance : processEngine.getRuntimeService().createProcessInstanceQuery().list()) {
+            processEngine.getRuntimeService().deleteProcessInstance(processInstance.getId(),"clear");
+        }
+
+        // 删除所有任务
+        for (Task task : processEngine.getTaskService().createTaskQuery().list()) {
+            processEngine.getTaskService().deleteTask(task.getId(), true);
+        }
     }
 }
